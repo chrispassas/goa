@@ -22,10 +22,10 @@ func ErrorHandler(service *goa.Service, verbose bool) goa.Middleware {
 
 			status := http.StatusInternalServerError
 			var respBody interface{}
-			if err, ok := e.(*goa.Error); ok {
-				status = err.Status
+			if err, ok := e.(goa.ServiceError); ok {
+				status = err.ResponseStatus()
 				respBody = err
-				goa.ContextResponse(ctx).ErrorCode = err.Code
+				goa.ContextResponse(ctx).ErrorCode = err.Token()
 				rw.Header().Set("Content-Type", goa.ErrorMediaIdentifier)
 			} else {
 				respBody = e.Error()
